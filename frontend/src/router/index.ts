@@ -39,14 +39,14 @@ const router = createRouter({
   routes,
 });
 
-const userLocalStore = new LocalStorage(STORAGE_KEY);
+const userLocalStore = new LocalStorage(STORAGE_KEY.USER);
 
 router.beforeEach((to) => {
-  const user = userLocalStore.get();
-  if(!!to.meta.requiresAuth && (!user || !user.isLogged)) {
-    console.log('not auth');
-    return { name: LinkPath.HOME };
-  }
+  // const user = userLocalStore.get();
+  // if(!!to.meta.requiresAuth && (!user || !user.isLogged)) {
+  //   console.log('not auth');
+  //   return { name: LinkPath.HOME };
+  // }
 
   return true;
 });

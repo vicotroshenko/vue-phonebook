@@ -19,11 +19,11 @@ import { createZodPlugin } from '@formkit/zod';
 const formId = 'contacts_id'
 
 defineProps<{
-  contactsItems: Contacts[]
+  contactsItems: Contacts[];
 }>()
 
 const emit = defineEmits<{
-  (event: 'handleSubmit', contact: Contacts & Omit<Contacts, 'id'>): void
+  (event: 'handleSubmit', contact: Contacts | Omit<Contacts, 'id'>): void
 }>();
 
 const [zodPlugin, submitHandler] = createZodPlugin(addContactSchema, async (formData) => {

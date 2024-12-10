@@ -23,16 +23,26 @@
 
 <script setup lang="ts">
 import ContactsList from '@/components/ContactsList/ContactsList.vue';
-import data from '../service/data.ts';
 import type { Contacts } from '@/types/contacts.js';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import UserHeader from '@/components/UserHeader/UserHeader.vue';
+import { contactsService } from '@/service/contacts.service.js';
 
-const contactsItems = ref<Contacts[]>(data);
+const contactsItems = ref<Contacts[]>([]);
 const searchValue = ref('');
 
-const addContact = (item: Omit<Contacts, 'id'>) => {
+onMounted(async () => {
+  const fetchedContacts = await contactsService.getAll({});
+  contactsItems.value = fetchedContacts.data;
+});
+
+const addContact = async (item: Omit<Contacts, 'id'>) => {
   contactsItems.value.push({ ...item, id: `${new Date()}` });
+  await contactsService.create({
+    config: {
+      data: item,
+    },
+  });
 };
 
 const updateContact = (item: Contacts) => {

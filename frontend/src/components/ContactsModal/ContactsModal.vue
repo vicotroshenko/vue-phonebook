@@ -31,7 +31,7 @@ const emit = defineEmits<{
   (event: 'updateContact', contact: Contacts): void;
 }>();
 
-const handleSubmit = (contact: Contacts & Omit<Contacts, 'id'>) => {
+const handleSubmit = (contact: Contacts | Omit<Contacts, 'id'>) => {
   emit('addContact', contact);
   emit('toggle');
 };
