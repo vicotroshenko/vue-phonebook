@@ -37,7 +37,7 @@ onMounted(async () => {
 });
 
 const addContact = async (item: Omit<Contacts, 'id'>) => {
-  contactsItems.value.push({ ...item, id: `${new Date()}` });
+  // contactsItems.value.push({ ...item, id: `${new Date()}` });
   await contactsService.create({
     config: {
       data: item,
@@ -47,7 +47,7 @@ const addContact = async (item: Omit<Contacts, 'id'>) => {
 
 const updateContact = (item: Contacts) => {
   contactsItems.value = contactsItems.value.map((el) => {
-    if (el.id === item.id) {
+    if (el._id === item._id) {
       return {
         ...el,
         ...item,
@@ -58,12 +58,12 @@ const updateContact = (item: Contacts) => {
 };
 
 const deleteContact = (id: string) => {
-  contactsItems.value = contactsItems.value.filter((el: Contacts) => el.id !== id);
+  contactsItems.value = contactsItems.value.filter((el: Contacts) => el._id !== id);
 };
 
 const addToFavorite = (id: string) => {
   contactsItems.value = contactsItems.value.map((el: Contacts) =>
-    el.id === id ? { ...el, favorite: !el.favorite } : el,
+    el._id === id ? { ...el, favorite: !el.favorite } : el,
   );
 };
 

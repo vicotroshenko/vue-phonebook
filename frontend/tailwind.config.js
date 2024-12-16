@@ -13,6 +13,7 @@ export default {
         'gray-2': 'rgba(141, 140, 140, 1)',
         'light-1': 'rgba(255, 255, 255, 0.2)',
         'gray-3': 'rgba(0, 0, 0, 0.3)',
+        'white-t': 'rgba(255, 255, 255, 0.2)',
         'bg-color': '#83BBA7',
         'item-color': '#CBE5DB',
       },

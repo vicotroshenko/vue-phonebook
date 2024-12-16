@@ -1,8 +1,8 @@
 <template>
-  <ul class="mx-auto flex w-fit flex-col gap-3 p-2">
-    <li v-for="(item, index) in contactsItems" :key="item.id">
+  <ul class="mx-auto flex w-fit flex-col gap-3 rounded-md bg-white-t p-3 backdrop-blur">
+    <li v-for="(item, index) in contactsItemsUpdated" :key="item._id">
       <ul
-        class="bg-item-color flex w-fit min-w-[360px] items-center justify-between rounded border-[1px] border-black p-2"
+        class="flex w-fit min-w-[360px] flex-wrap items-center rounded border-[1px] border-black bg-white-t p-2"
         :class="{
           'border-1 border-red-600': item.favorite,
         }"
@@ -18,10 +18,9 @@
         <li>
           <DropDownMenu
             :item="item"
-            @openDropdown="getIndexOpenDropDownItem"
-            @deleteItem="$emit('deleteContact', item.id)"
+            @openDropdown="openDropdown"
+            @deleteItem="$emit('deleteContact', item._id)"
             @addToFavorite="$emit('addToFavorite', $event)"
-            :isDropDownOpen="item.id === indexOpenDropDownItem"
           />
         </li>
       </ul>
@@ -32,8 +31,8 @@
 <script setup lang="ts">
 import type { Contacts } from '@/types/contacts';
 import DropDownMenu from '../DropDownMenu/DropDownMenu.vue';
-import { ref } from 'vue';
-defineProps<{
+import { computed, ref } from 'vue';
+const { contactsItems } = defineProps<{
   contactsItems: Contacts[];
 }>();
 
@@ -42,14 +41,22 @@ defineEmits<{
   (event: 'addToFavorite', id: string): void;
 }>();
 
-const indexOpenDropDownItem = ref<string | null>(null);
+const openDropDownId = ref<string | null>(null);
 
-const getIndexOpenDropDownItem = (id: string | undefined) => {
-  console.log('id: ', id);
-  if (id && id !== indexOpenDropDownItem.value) {
-    indexOpenDropDownItem.value = id;
-    return;
-  }
-  indexOpenDropDownItem.value = null;
+const viewedDropDown = (id?: string) => {
+  if (!id) return;
+  return contactsItemsUpdated.value.find((item) => item._id === id);
+};
+
+const contactsItemsUpdated = computed(() =>
+  contactsItems.map((item) =>
+    item._id === openDropDownId.value
+      ? { ...item, isOpenDropDown: true }
+      : { ...item, isOpenDropDown: false },
+  ),
+);
+
+const openDropdown = (id?: string) => {
+  openDropDownId.value = !id || viewedDropDown(id)?.isOpenDropDown ? null : id;
 };
 </script>

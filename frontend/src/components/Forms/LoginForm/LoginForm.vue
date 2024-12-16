@@ -31,20 +31,20 @@ import loginSchema from './validation';
 import { createZodPlugin } from '@formkit/zod';
 import GoBackButton from '@/components/GoBackButton/GoBackButton.vue';
 import { useRouter } from 'vue-router';
-import { LocalStorage } from '@/utils/localStorage';
-import { STORAGE_KEY } from '@/constants/keys';
+// import { LocalStorage } from '@/utils/localStorage';
+// import { STORAGE_KEY } from '@/constants/keys';
 const router = useRouter();
-const userLocalStore = new LocalStorage(STORAGE_KEY);
+// const userLocalStore = new LocalStorage(STORAGE_KEY);
 
 const [zodPlugin, submitHandler] = createZodPlugin(loginSchema, async (formData) => {
-  const existUser = userLocalStore.get();
-  if (!existUser) return;
-  const isUserValuesIncludes = (value: string) => Object.values(existUser).includes(value);
-  if (!isUserValuesIncludes(formData.email) || !isUserValuesIncludes(formData.password)) return;
-  userLocalStore.set({
-    ...existUser,
-    isLogged: true,
-  });
+  // const existUser = userLocalStore.get();
+  // if (!existUser) return;
+  // const isUserValuesIncludes = (value: string) => Object.values(existUser).includes(value);
+  // if (!isUserValuesIncludes(formData.email) || !isUserValuesIncludes(formData.password)) return;
+  // userLocalStore.set({
+  //   ...existUser,
+  //   isLogged: true,
+  // });
   router.replace('/');
   reset('login_form');
 });
