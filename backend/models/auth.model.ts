@@ -25,6 +25,10 @@ export const authSchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    token: {
+      type: String,
+      default: ""
+    }
   },
   { versionKey: false, timestamps: true },
 );

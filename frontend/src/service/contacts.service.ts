@@ -1,4 +1,4 @@
-import { STORAGE_KEY } from '@/constants/keys';
+import { HTTP_KEYS, STORAGE_KEY } from '@/constants/keys';
 import { LocalStorage } from '@/utils/localStorage';
 import type { Axios, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
@@ -32,7 +32,6 @@ export class HttpService {
   }
 
   async getAll({ config = {}, withAuth }: Omit<RequestParameters, 'id'>) {
-		console.log('start fetch');
     if (withAuth) {
       config.headers = {
         ...config.headers,
@@ -87,8 +86,5 @@ export class HttpService {
   }
 }
 
-enum HTTP_KEYS {
-  BASE_URL = 'http://localhost:8080',
-  API_CONTACTS = 'api/contacts',
-}
+
 export const contactsService = new HttpService(HTTP_KEYS.BASE_URL, axios, HTTP_KEYS.API_CONTACTS);

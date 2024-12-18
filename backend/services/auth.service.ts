@@ -1,10 +1,11 @@
-import jwt from "jsonwebtoken";
+import jsonwebtoken from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { HTTPStatus,HTTPMessage } from "../constants/http.constant";
+import { HTTPStatus, HTTPMessage } from "../constants/http.constant";
 import Auth from "../models/auth.model";
 import { User } from "../types/user";
 import { HttpError } from "../utils";
-const { SECRET_KEY = "" } = process.env;
+import { Types } from "mongoose";
+const { SECRET_KEY } = process.env;
 
 export default class AuthService {
   private async hashPassword(password: string) {
@@ -12,19 +13,19 @@ export default class AuthService {
     return await bcrypt.hash(password, salt);
   }
 
-  public createToken(id: string) {
-    return jwt.sign({ id }, SECRET_KEY, { expiresIn: "23h" });
+  public createToken(email: string) {
+    return jsonwebtoken.sign({ email }, SECRET_KEY || "", { expiresIn: "23h" });
   }
 
   public covertToken(token: string) {
-    return jwt.decode(token);
+    return jsonwebtoken.decode(token);
   }
 
   public async createUser(body: User) {
     return await Auth.create(body);
   }
 
-  public async updateUser(id: string, body: Partial<User>) {
+  public async updateUser(id: Types.ObjectId, body: Partial<User>) {
     return await Auth.findByIdAndUpdate(id, body, {
       new: true,
     });
@@ -42,25 +43,24 @@ export default class AuthService {
     const hashedPassword = await this.hashPassword(body.password);
     const user = { ...body, password: hashedPassword };
     const createdUser = await this.createUser(user);
-
-    const token = this.createToken(createdUser.id);
-    return this.updateUser(createdUser.id, { ...createdUser, token });
+    const token = this.createToken(createdUser.email);
+    return this.updateUser(createdUser._id, { token });
   }
 
-  public async login({
-    email,
-    password,
-  }: Pick<User, "email" | "password">) {
+  public async login({ email, password }: Pick<User, "email" | "password">) {
     const user = await this.validateUser({ email, password });
     if (!user) {
       throw new HttpError(HTTPStatus.BAD_REQUEST, HTTPMessage.BAD_REQUEST);
     }
 
-    const token = this.createToken(user.id);
-    return await this.updateUser(user.id, { ...user, token, password });
+    const token = this.createToken(user.email);
+    console.log("token: ", token);
+    return await this.updateUser(user._id, {
+      token,
+    });
   }
 
-  public async logout(id: string) {
+  public async logout(id: Types.ObjectId) {
     return await this.updateUser(id, { token: "" });
   }
 
@@ -83,3 +83,5 @@ export default class AuthService {
     return null;
   }
 }
+
+export const authService = new AuthService();
