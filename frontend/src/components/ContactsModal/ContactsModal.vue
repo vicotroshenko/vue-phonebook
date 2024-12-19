@@ -1,7 +1,7 @@
 <template>
   <div v-if="isOpen" class="fixed inset-0 z-20 h-full w-full bg-gray-3">
     <div
-      class="bg-bg-color absolute left-1/2 top-1/2 min-w-[360px] max-w-[400px] translate-x-[-50%] translate-y-[-50%] rounded-md p-5 shadow shadow-black"
+      class="absolute left-1/2 top-1/2 min-w-[360px] max-w-[400px] translate-x-[-50%] translate-y-[-50%] rounded-md bg-bg-color p-5 shadow shadow-black"
     >
       <button
         type="button"
@@ -11,7 +11,7 @@
       >
         X
       </button>
-      <AddContactForm :contactsItems="contactsItems" @handleSubmit="handleSubmit" />
+      <AddContactForm @handleSubmit="handleSubmit" />
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@ import AddContactForm from '../Forms/AddContactForm/AddContactForm.vue';
 
 defineProps<{
   isOpen: boolean;
-  contactsItems: Contacts[];
+  defaultValues: Contacts;
 }>();
 
 const emit = defineEmits<{

@@ -1,35 +1,17 @@
 <template>
   <div class="relative">
-    <button
-      type="button"
-      class="h-[18px] w-[18px] p-1"
-      @click="$emit('openDropdown', item._id)"
-      aria-label="button open drop down menu"
-      :data-name="BUTTON_DATANAME"
-    >
-      <ArrowIcon
-        class="pointer-events-none h-full w-full transition-all"
-        :class="item.isOpenDropDown && 'rotate-180'"
-      />
+    <button type="button" class="h-[18px] w-[18px] p-1" @click="$emit('openDropdown', item._id)"
+      aria-label="button open drop down menu" :data-name="BUTTON_DATANAME">
+      <ArrowIcon class="pointer-events-none h-full w-full transition-all"
+        :class="item.isOpenDropDown && 'rotate-180'" />
     </button>
-    <div
-      v-if="item.isOpenDropDown"
-      ref="drop-down"
-      class="absolute left-0 top-full z-40 flex w-max flex-col items-start gap-1 rounded-md border-[1px] border-black bg-white p-2"
-    >
-      <button
-        type="button"
-        @click="$emit('deleteItem', item._id)"
-        class="w-full rounded bg-slate-300 p-1"
-      >
+    <div v-if="item.isOpenDropDown" ref="drop-down"
+      class="absolute left-0 top-full z-40 flex w-max flex-col items-start gap-1 rounded-md border-[1px] border-black bg-white p-2">
+      <button type="button" @click="$emit('deleteItem', item._id)" class="w-full rounded bg-slate-300 p-1">
         Delete
       </button>
       <button type="button" class="w-full rounded bg-slate-300 p-1">Change contact</button>
-      <button
-        type="button"
-        @click="$emit('addToFavorite', item._id)"
-        class="w-full rounded bg-slate-300 p-1"
-      >
+      <button type="button" @click="$emit('changeFavorite', item._id)" class="w-full rounded bg-slate-300 p-1">
         {{ item.favorite ? 'Delete from favorite' : ' Add to Favorite' }}
       </button>
     </div>
@@ -50,7 +32,7 @@ defineProps<{
   item: Contacts & OpenDropDown;
 }>();
 
-const emit = defineEmits(['openDropdown', 'deleteItem', 'addToFavorite']);
+const emit = defineEmits(['openDropdown', 'deleteItem', 'changeFavorite']);
 
 const dropDownRef = useTemplateRef('drop-down');
 

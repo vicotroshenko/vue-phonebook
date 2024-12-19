@@ -1,6 +1,5 @@
 <template>
   <UserHeader
-    :contactsItems="contactsItems"
     @addContact="addContact"
     @updateContact="updateContact"
   />
@@ -16,7 +15,7 @@
     <ContactsList
       :contactsItems="searchedContacts"
       @deleteContact="deleteContact"
-      @addToFavorite="addToFavorite"
+      @changeFavorite="changeFavorite"
     />
   </main>
 </template>
@@ -32,21 +31,28 @@ const contactsItems = ref<Contacts[]>([]);
 const searchValue = ref('');
 
 onMounted(async () => {
-  const fetchedContacts = await contactsService.getAll({});
-  contactsItems.value = fetchedContacts.data;
+  const fetchedContacts = await contactsService.getAll({ withAuth: true });
+  contactsItems.value = sortContactsByFavorite(fetchedContacts.data);
 });
 
-const addContact = async (item: Omit<Contacts, 'id'>) => {
-  // contactsItems.value.push({ ...item, id: `${new Date()}` });
-  await contactsService.create({
+const sortContactsByFavorite = (items: Contacts[]) => {
+  const favorite = items.filter((item) => item.favorite);
+  const notFavorite = items.filter((item) => !item.favorite);
+  return [...favorite, ...notFavorite];
+};
+
+const addContact = (item: Omit<Contacts, 'id'>) => {
+  contactsItems.value.push({ ...item, _id: `${new Date()}` });
+  contactsService.create({
     config: {
       data: item,
     },
+    withAuth: true,
   });
 };
 
 const updateContact = (item: Contacts) => {
-  contactsItems.value = contactsItems.value.map((el) => {
+  contactsItems.value = sortContactsByFavorite(contactsItems.value.map((el) => {
     if (el._id === item._id) {
       return {
         ...el,
@@ -54,17 +60,23 @@ const updateContact = (item: Contacts) => {
       };
     }
     return el;
-  });
+  }));
+
+  const [data] = contactsItems.value.filter((el) => el._id === item._id);
+  contactsService.put({ config: { data: { ...data } }, withAuth: true, id: item._id });
 };
 
 const deleteContact = (id: string) => {
   contactsItems.value = contactsItems.value.filter((el: Contacts) => el._id !== id);
+  contactsService.delete({ id, withAuth: true });
 };
 
-const addToFavorite = (id: string) => {
-  contactsItems.value = contactsItems.value.map((el: Contacts) =>
+const changeFavorite = (id: string) => {
+  contactsItems.value = sortContactsByFavorite(contactsItems.value.map((el: Contacts) =>
     el._id === id ? { ...el, favorite: !el.favorite } : el,
-  );
+  ));
+  const [data] = contactsItems.value.filter((el) => el._id === id);
+  contactsService.put({ config: { data: { ...data } }, withAuth: true, id });
 };
 
 const searchedContacts = computed(() =>

@@ -2,7 +2,6 @@
   <ContactsModal
     @toggle="toggle"
     :isOpen="isOpenModal"
-    :contactsItems="contactsItems"
     @addContact="$emit('addContact', $event)"
     @updateContact="$emit('updateContact', $event)"
   />
@@ -28,14 +27,9 @@
 import { ref } from 'vue';
 import ContactsModal from '../ContactsModal/ContactsModal.vue';
 import type { Contacts } from '@/types/contacts';
-import { LocalStorage } from '@/utils/localStorage';
-import { STORAGE_KEY } from '@/constants/keys';
 import { useRouter } from 'vue-router';
 import { LinkPath } from '@/router';
-
-defineProps<{
-  contactsItems: Contacts[];
-}>();
+import userService from '@/service/user.service';
 
 defineEmits<{
   (event: 'addContact', contact: Omit<Contacts, 'id'>): void;
@@ -43,18 +37,12 @@ defineEmits<{
 }>();
 
 const isOpenModal = ref<boolean>(false);
-const userLocalStore = new LocalStorage(STORAGE_KEY);
 const router = useRouter();
 
 const toggle = () => (isOpenModal.value = !isOpenModal.value);
 
-const handleLogout = () => {
-  const user = userLocalStore.get();
-  if (!user) return;
-  userLocalStore.set({
-    ...user,
-    isLogged: false,
-  });
+const handleLogout = async () => {
+  await userService.logout()
   router.push('/' + LinkPath.HOME);
 };
 </script>

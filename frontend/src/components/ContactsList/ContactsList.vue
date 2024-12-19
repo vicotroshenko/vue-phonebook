@@ -20,7 +20,7 @@
             :item="item"
             @openDropdown="openDropdown"
             @deleteItem="$emit('deleteContact', item._id)"
-            @addToFavorite="$emit('addToFavorite', $event)"
+            @changeFavorite="$emit('changeFavorite', $event)"
           />
         </li>
       </ul>
@@ -38,7 +38,7 @@ const { contactsItems } = defineProps<{
 
 defineEmits<{
   (event: 'deleteContact', id: string): void;
-  (event: 'addToFavorite', id: string): void;
+  (event: 'changeFavorite', id: string): void;
 }>();
 
 const openDropDownId = ref<string | null>(null);

@@ -70,6 +70,7 @@ export class HttpService {
         ...this.populateTokenToHeaderConfig(),
       };
     }
+    console.log(config.data);
     return await this.fetchingService.put(this.getFullApiUrl(id), config.data, {
       headers: config.headers,
     });
